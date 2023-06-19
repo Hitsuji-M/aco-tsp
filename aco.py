@@ -54,12 +54,49 @@ class ACO:
         return random.choices(availables, weights=values)
 
 
+    def generate_path(self, start: int) -> list[tuple[int, int]]:
+        previous = start
+        path = []
+        visited = set()
+
+        visited.add(start)
+        for _ in range(self.n_cities - 1):
+            city = self.choose_city(previous, visited)
+            path.append((previous, city))
+            visited.add(city)
+            previous = city
+        path.append((previous, start))
+
+    
+    def get_path_weight(self, path: list[tuple[int, int]]) -> int:
+        distance = 0
+
+        for move in path:
+            distance += self.cities[move]
+        return distance
+
+
+    def get_paths(self) -> list[list[tuple[int, int]]]:
+        paths: list[list[tuple[int, int]]] = []
+        for _ in range(self.n_ants):
+            paths.append(self.generate_path(random.randint(0, self.n_cities)))
+        return paths
+
+    
+    def add_pheromones(self, path: list[tuple[int, int]]) -> None:
+        raise NotImplementedError("The function to add pheromones on the path is not implemented")
+
+
+    def generate_decay(self) -> None:
+        raise NotImplementedError("the decay handling function is not implemented")
+        
+
     def find_best(self) -> tuple[list, int]:
         best_path = ([], np.inf)
         path = []
         
         for _ in range(self.n_iter):
-            parkour = np.sum(path)
-            if parkour < best_path[1]:
-                best_path = (path, parkour)
+            self.get_paths()
+            self.generate_decay()
+            self.add_pheromones(None)
         return best_path
