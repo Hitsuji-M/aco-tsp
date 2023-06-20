@@ -1,6 +1,6 @@
 This is an implementation of the Ant Colony Optimization (ACO) algortithm for the Travelling Salesman Problem (TSP) with symetric arcs. Created for my project in the course **Computational Intelligence**.
 
-## launch the project
+## launch the project
 
 - Clone and move into the repository
 - Execute the main file `python3 main.py` 

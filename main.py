@@ -70,9 +70,9 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
 
 def main():
     """Main function lauched by default. Execute the ACO on all the files in `instances` repository"""
-    n_ants = 1
+    n_ants = 5
     n_iter = 100
-    decay = 0.5
+    decay = 0.75
     alpha = 1
     beta = 1
     random_start = False
@@ -110,7 +110,7 @@ def main():
             res.write(f"--- {file} ---\n")
             res.write(f"• Number of cities : {ncities}\n")
             res.write(f"• Weight result : {result.weight}\n")
-            res.write(f"• Time spent : {delta}")
+            res.write(f"• Time spent : {delta}\n")
             res.write(str(result.path))
 
             print(f"{file} ({ncities} cities) ==> {delta}\n")
