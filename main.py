@@ -1,6 +1,7 @@
 import numpy as np
 
 from aco import ACO
+from os import listdir
 
 def read_from_file(filename) -> tuple[int, np.ndarray]:
     """
@@ -51,20 +52,42 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
 
 
 def main():
-    ncities, matrix = read_from_file("instances/gr120.tsp")
     n_ants = 1
     n_iter = 100
     decay = 0.5
     alpha = 1
     beta = 1
+    random_start = False
 
-    aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
-    result = aco.find_best(False)
+    lines = [
+        " ##### Results ##### ",
+        "",
+        "Params :",
+        "--------",
+        f"• Number of ants : {n_ants}",
+        f"• Number of iterations : {n_iter}",
+        f"• Decay factor : {decay}",
+        f"• Pheromones and distance weights : {alpha} / {beta}",
+        f"• Random start : {random_start}"
+    ]
 
-    print("\n ------- Solution ------- \n")
-    print(result.path)
-    print("==>", result.weight)
+    with open("res.txt", "w") as res:
+        res.write("\n".join(lines) + "\n")
+ 
+        files = listdir("instances/")
+        for file in files:
+            if not file.endswith(".tsp"):
+                continue
+            
+            ncities, matrix = read_from_file(f"instances/{file}")
+            aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
+            result = aco.find_best(False)
 
+            res.write("\n\n")
+            res.write(f"--- {file} ---\n")
+            res.write(f"• Number of cities : {ncities}\n")
+            res.write(f"• Weight result : {result.weight}\n")
+            res.write(str(result.path))
 
 if __name__ == "__main__":
     main()
