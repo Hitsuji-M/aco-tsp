@@ -80,7 +80,7 @@ class ACO:
         self.alpha = alpha
         self.beta = beta
         
-        self.pheromones = np.ones(self.cities.shape) / 2
+        self.pheromones = np.ones(self.cities.shape)
         self.random_start = False
 
     
@@ -92,7 +92,8 @@ class ACO:
     def choose_city(self, start: int, visited: set) -> int:
         """
         Choose the next city to move in
-        Probability of choosing a city is equal to `pheromones^(alpha) * (1/distance)^(beta)`
+        Probability of choosing a city is equal to
+        `(pheromones^(alpha) * (1/distance)^(beta)) / (Sum of all the availables path's score)`
 
         Args:
         -----
@@ -111,13 +112,14 @@ class ACO:
         arcs = self.cities[start]
         complete_score = 0
 
+        # Score computing corresponding to the formula (docstring)
         score = lambda y, x: (self.pheromones[x,y]**self.alpha) * (1/arcs[y])**self.beta
 
         for num in availables:
             complete_score += score(num, start)
 
         for idx, num in enumerate(availables):
-            values[idx] = score(num, start) / complete_score
+            values[idx] = score(num, start) / complete_score # Probability calculation
 
         return random.choices(list(availables), weights=values)[0]
 
@@ -168,7 +170,7 @@ class ACO:
         """
         for move in path.path:
             self.pheromones[move] += 1 / self.cities[move]
-            self.pheromones[move[::-1]] += 1 / self.cities[move[::-1]]
+            self.pheromones[move[::-1]] += 1 / self.cities[move[::-1]] # We have a symetric TSP
 
 
     def evaporation(self) -> None:

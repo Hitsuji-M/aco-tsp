@@ -124,7 +124,7 @@ def single_exec(filename: str):
     filename : str
         The name of the file that will create the distances matrix
     """
-    n_ants = 1
+    n_ants = 10
     n_iter = 100
     decay = 0.75
     alpha = 1
