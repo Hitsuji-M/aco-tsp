@@ -133,11 +133,11 @@ class ACO:
 
 
     def generate_decay(self) -> None:
-        raise NotImplementedError("the decay handling function is not implemented")
+        self.pheromones *= self.decay
         
 
     def find_best(self, print_best: bool) -> Path:
-        res: Path = None
+        res: Path = Path(None)
         best_path: Path = None
         
         for _ in range(self.n_iter):
