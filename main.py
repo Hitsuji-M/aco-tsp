@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 from aco import ACO
 from os import listdir
@@ -79,15 +80,23 @@ def main():
             if not file.endswith(".tsp"):
                 continue
             
+            
             ncities, matrix = read_from_file(f"instances/{file}")
             aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
+
+            before = time.time()
             result = aco.find_best(False)
+            after = time.time()
+            delta = round(after - before, 5)
 
             res.write("\n\n")
             res.write(f"--- {file} ---\n")
             res.write(f"• Number of cities : {ncities}\n")
             res.write(f"• Weight result : {result.weight}\n")
+            res.write(f"• Time spent : {delta}")
             res.write(str(result.path))
+
+            print(f"{file} ({ncities} cities) ==> {delta}\n")
 
 if __name__ == "__main__":
     main()
