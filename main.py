@@ -18,7 +18,17 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
         lines=f.readlines()
 
     for l in lines:
-        if l.startswith("DIMENSION:"):
+        if l.startswith("TYPE:"):
+            if l.strip()[6:] != "TSP":
+                raise TypeError("The file's type must 'TSP'")
+        elif l.startswith("EDGE_WEIGHT_TYPE"):
+            if l.strip()[18:] != "EXPLICIT":
+                raise TypeError("The edges' weights must be of the type 'EXPLICIT'")
+        elif l.startswith("EDGE_WEIGHT_FORMAT"):
+            if l.strip()[20:] != "LOWER_DIAG_ROW":
+                raise TypeError("The edges' format must be 'LOWER_DIAG_ROW")
+
+        elif l.startswith("DIMENSION:"):
             ncities=int(l[11:].strip())
         elif l.startswith("EDGE_WEIGHT_SECTION"):
             in_matrix=True
@@ -41,7 +51,7 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
 
 
 def main():
-    ncities, matrix = read_from_file("instances/gr21.tsp")
+    ncities, matrix = read_from_file("instances/gr120.tsp")
     n_ants = 1
     n_iter = 100
     decay = 0.5
@@ -49,7 +59,7 @@ def main():
     beta = 1
 
     aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
-    result = aco.find_best(True)
+    result = aco.find_best(False)
 
     print("\n ------- Solution ------- \n")
     print(result.path)
