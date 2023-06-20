@@ -5,6 +5,16 @@ from dataclasses import dataclass
 
 @dataclass()
 class Path:
+    """
+    Dataclass representing a path completing the TSP problem.
+
+    Attributes
+    ----------
+    path : list[tuple[int, int]]
+        The path took by the ant to complete the problem
+    weight : int
+        The complete weight of the path
+    """
     path: list[tuple[int, int]]
     weight: int = np.inf
 
