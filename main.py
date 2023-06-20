@@ -42,15 +42,18 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
 
 def main():
     ncities, matrix = read_from_file("instances/gr21.tsp")
-    n_ants = 2
-    n_iter = 1
+    n_ants = 1
+    n_iter = 100
     decay = 0.5
     alpha = 1
     beta = 1
 
     aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
     result = aco.find_best(True)
-    print(result)
+
+    print("\n ------- Solution ------- \n")
+    print(result.path)
+    print("==>", result.weight)
 
 
 if __name__ == "__main__":

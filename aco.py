@@ -139,10 +139,12 @@ class ACO:
 
     
     def add_pheromones(self, path: Path) -> None:
-        raise NotImplementedError("The function to add pheromones on the path is not implemented")
+        for move in path.path:
+            self.pheromones[move] += 1 / self.cities[move]
+            self.pheromones[move[::-1]] += 1 / self.cities[move[::-1]]
 
 
-    def generate_decay(self) -> None:
+    def evaporation(self) -> None:
         self.pheromones *= self.decay
         
 
@@ -157,6 +159,7 @@ class ACO:
             if best_path < res:
                 res = best_path
 
-            #self.generate_decay()
-            #self.add_pheromones(None)
+            self.add_pheromones(best_path)
+            self.evaporation()
+            if print_best: print(best_path)
         return res
