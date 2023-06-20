@@ -1,6 +1,29 @@
 import numpy as np
 import random
 
+from dataclasses import dataclass
+
+@dataclass()
+class Path:
+    path: list[tuple[int, int]]
+    weight: int = np.inf
+
+    def __lt__(self, other):
+        if not isinstance(other, Path): raise TypeError(f"'<' not supported between instances of '{type(self)}' and '{type(other)}'")
+        return self.weight < other.weight
+
+    def __gt__(self, other):
+        if not isinstance(other, Path): raise TypeError(f"'>' not supported between instances of '{type(self)}' and '{type(other)}'")
+        return self.weight > other.weight
+
+    def __le__(self, other):
+        if not isinstance(other, Path): raise TypeError(f"'<=' not supported between instances of '{type(self)}' and '{type(other)}'")
+        return self.weight <= other.weight
+
+    def __ge__(self, other):
+        if not isinstance(other, Path): raise TypeError(f"'>=' not supported between instances of '{type(self)}' and '{type(other)}'")
+        return self.weight >= other.weight
+
 
 class ACO:
     """
@@ -25,6 +48,7 @@ class ACO:
     beta : int
         Weight of the distance when computing city probability
     random_start : bool
+        A boolean to determine if the ants should start at a random city or always at the city #0
     """
 
     def __init__(
@@ -71,7 +95,15 @@ class ACO:
         return random.choices(list(availables), weights=values)[0]
 
 
-    def generate_path(self, start: int) -> list[tuple[int, int]]:
+    def get_path_weight(self, path: list[tuple[int, int]]) -> int:
+        distance = 0
+
+        for move in path:
+            distance += self.cities[move]
+        return distance
+
+
+    def generate_path(self, start: int) -> Path:
         previous = start
         path = []
         visited = set()
@@ -84,26 +116,19 @@ class ACO:
             previous = city
 
         path.append((previous, start))
-        return path
-
-    
-    def get_path_weight(self, path: list[tuple[int, int]]) -> int:
-        distance = 0
-
-        for move in path:
-            distance += self.cities[move]
-        return distance
+        weight = self.get_path_weight(path)
+        return Path(path, weight)
 
 
-    def get_paths(self) -> list[list[tuple[int, int]]]:
-        paths: list[list[tuple[int, int]]] = []
+    def get_paths(self) -> list[Path]:
+        paths: list[Path] = []
         for _ in range(self.n_ants):
             start = random.randint(0, self.n_cities) if self.random_start else 0
             paths.append(self.generate_path(start))
         return paths
 
     
-    def add_pheromones(self, path: list[tuple[int, int]]) -> None:
+    def add_pheromones(self, path: Path) -> None:
         raise NotImplementedError("The function to add pheromones on the path is not implemented")
 
 
@@ -111,12 +136,17 @@ class ACO:
         raise NotImplementedError("the decay handling function is not implemented")
         
 
-    def find_best(self, print_best: bool) -> tuple[list, int]:
-        best_path = ([], np.inf)
-        path = []
+    def find_best(self, print_best: bool) -> Path:
+        res: Path = None
+        best_path: Path = None
         
         for _ in range(self.n_iter):
-            self.get_paths()
+            paths = self.get_paths()
+            best_path = min(paths)
+
+            if best_path < res:
+                res = best_path
+
             #self.generate_decay()
             #self.add_pheromones(None)
-        return best_path
+        return res

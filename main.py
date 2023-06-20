@@ -50,8 +50,7 @@ def main():
 
     aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
     result = aco.find_best(True)
-
-    print(result[0], result[1], sep="\n")
+    print(result)
 
 
 if __name__ == "__main__":
