@@ -85,10 +85,27 @@ class ACO:
 
     
     def set_random_start(self, random_start: bool) -> None:
+        """Set random start attribute"""
         self.random_start = random_start
 
 
     def choose_city(self, start: int, visited: set) -> int:
+        """
+        Choose the next city to move in
+        Probability of choosing a city is equal to `pheromones^(alpha) * (1/distance)^(beta)`
+
+        Args:
+        -----
+        start : int
+            The index of city corresponding to the ant current position
+        visited : set
+            A set of all the indexes of the already visited cities
+
+        Returns:
+        --------
+        int
+            The index of the chosen city        
+        """
         availables = set(range(self.n_cities)) - visited
         values = [0.0 for _ in range(len(availables))]
         arcs = self.cities[start]
@@ -106,6 +123,7 @@ class ACO:
 
 
     def get_path_weight(self, path: list[tuple[int, int]]) -> int:
+        """Compute the total distance of the path"""
         distance = 0
 
         for move in path:
@@ -114,6 +132,10 @@ class ACO:
 
 
     def generate_path(self, start: int) -> Path:
+        """
+        Generate a path from the given starting point
+        this path goes by each city once and finish at the starting one.
+        """
         previous = start
         path = []
         visited = set()
@@ -131,6 +153,7 @@ class ACO:
 
 
     def get_paths(self) -> list[Path]:
+        """Get the paths of each ant in this iteration"""
         paths: list[Path] = []
         for _ in range(self.n_ants):
             start = random.randint(0, self.n_cities) if self.random_start else 0
@@ -139,16 +162,34 @@ class ACO:
 
     
     def add_pheromones(self, path: Path) -> None:
+        """
+        Add pheromones of the best path only
+        Calculted in this way, `pheromones = pheromones + (1 / distance) 
+        """
         for move in path.path:
             self.pheromones[move] += 1 / self.cities[move]
             self.pheromones[move[::-1]] += 1 / self.cities[move[::-1]]
 
 
     def evaporation(self) -> None:
+        """Execute the evaportation of the pheromones with decay factor"""
         self.pheromones *= self.decay
         
 
     def find_best(self, print_best: bool) -> Path:
+        """
+        Find the best path out of all the iterations
+
+        Args:
+        -----
+        print_best : bool
+            Boolean to decide if you want the best path of each iteration
+
+        Returns:
+        --------
+        Path
+            The best path found among all the iterations
+        """
         res: Path = Path(None)
         best_path: Path = None
         

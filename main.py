@@ -69,6 +69,7 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
 
 
 def main():
+    """Main function lauched by default. Execute the ACO on all the files in `instances` repository"""
     n_ants = 1
     n_iter = 100
     decay = 0.5
@@ -115,6 +116,14 @@ def main():
             print(f"{file} ({ncities} cities) ==> {delta}\n")
 
 def single_exec(filename: str):
+    """
+    The function to execute the ACO on only one file
+
+    Args:
+    -----
+    filename : str
+        The name of the file that will create the distances matrix
+    """
     n_ants = 1
     n_iter = 100
     decay = 0.75
