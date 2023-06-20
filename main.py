@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import sys
 
 from aco import ACO
 from os import listdir
@@ -10,6 +11,21 @@ def read_from_file(filename) -> tuple[int, np.ndarray]:
     for the TSP problem.
 
     Originally created by Marco Baioletti
+
+    Args:
+    -----
+    filename : str
+        Name of the file containing cities data for TSP
+
+    Raises:
+    -------
+    TypeError
+        The file's data is not in the good format or type
+
+    Returns:
+    --------
+    tuple[int, np.ndarray]
+        Tuple containing the number of cities and the matrix with the distances
     """
     ncities = 0
     k = 0
@@ -79,10 +95,10 @@ def main():
         for file in files:
             if not file.endswith(".tsp"):
                 continue
-            
-            
+
             ncities, matrix = read_from_file(f"instances/{file}")
             aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
+            aco.set_random_start(random_start)
 
             before = time.time()
             result = aco.find_best(False)
@@ -98,5 +114,24 @@ def main():
 
             print(f"{file} ({ncities} cities) ==> {delta}\n")
 
+def single_exec(filename: str):
+    n_ants = 1
+    n_iter = 100
+    decay = 0.75
+    alpha = 1
+    beta = 1
+    random_start = False
+
+    ncities, matrix = read_from_file(f"instances/{filename}")
+    aco = ACO(matrix, ncities, n_ants, n_iter, decay, alpha, beta)
+    aco.set_random_start(random_start)
+    
+    result = aco.find_best(True)
+    print("\n\nWeight :", result.weight)
+    print(result.path)
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 3 and (sys.argv[1] == "single" or sys.argv[1] == "-s"):
+        single_exec(sys.argv[2])
+    else:
+        main()
